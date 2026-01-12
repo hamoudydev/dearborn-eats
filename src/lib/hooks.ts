@@ -234,3 +234,207 @@ export function useMenuItems(restaurantId: string) {
     enabled: !!restaurantId,
   })
 }
+
+// =====================
+// ADMIN
+// =====================
+
+export function useAdminStats() {
+  return useQuery({
+    queryKey: ['admin-stats'],
+    queryFn: async () => {
+      const [restaurants, reviews, profiles, applications] = await Promise.all([
+        supabase.from('restaurants').select('id', { count: 'exact' }),
+        supabase.from('reviews').select('id', { count: 'exact' }),
+        supabase.from('profiles').select('id, role', { count: 'exact' }),
+        supabase.from('foodie_applications').select('id, status', { count: 'exact' }).eq('status', 'pending'),
+      ])
+
+      const foodies = await supabase.from('profiles').select('id', { count: 'exact' }).eq('role', 'foodie')
+
+      return {
+        restaurantCount: restaurants.count || 0,
+        reviewCount: reviews.count || 0,
+        userCount: profiles.count || 0,
+        foodieCount: foodies.count || 0,
+        pendingApplications: applications.count || 0,
+      }
+    },
+  })
+}
+
+export function useAllRestaurants() {
+  return useQuery({
+    queryKey: ['admin-restaurants'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      return data as Restaurant[]
+    },
+  })
+}
+
+export function useAllUsers() {
+  return useQuery({
+    queryKey: ['admin-users'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      return data as Profile[]
+    },
+  })
+}
+
+export function usePendingApplications() {
+  return useQuery({
+    queryKey: ['pending-applications'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('foodie_applications')
+        .select(`
+          *,
+          user:profiles(*)
+        `)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      return data
+    },
+  })
+}
+
+export function useCreateRestaurant() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (restaurant: Omit<Restaurant, 'id' | 'created_at' | 'updated_at'>) => {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .insert(restaurant)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['restaurants'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-restaurants'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-stats'] })
+    },
+  })
+}
+
+export function useUpdateRestaurant() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<Restaurant> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['restaurants'] })
+      queryClient.invalidateQueries({ queryKey: ['restaurants', variables.id] })
+      queryClient.invalidateQueries({ queryKey: ['admin-restaurants'] })
+    },
+  })
+}
+
+export function useDeleteRestaurant() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('restaurants')
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['restaurants'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-restaurants'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-stats'] })
+    },
+  })
+}
+
+export function useUpdateUserRole() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: 'admin' | 'foodie' | 'public' }) => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({ role, is_verified: role === 'foodie' })
+        .eq('id', userId)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+      queryClient.invalidateQueries({ queryKey: ['foodies'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-stats'] })
+    },
+  })
+}
+
+export function useApproveApplication() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ applicationId, approved }: { applicationId: string; approved: boolean }) => {
+      const { data: application } = await supabase
+        .from('foodie_applications')
+        .select('user_id')
+        .eq('id', applicationId)
+        .single()
+
+      if (!application) throw new Error('Application not found')
+
+      // Update application status
+      await supabase
+        .from('foodie_applications')
+        .update({
+          status: approved ? 'approved' : 'rejected',
+          reviewed_at: new Date().toISOString(),
+        })
+        .eq('id', applicationId)
+
+      // If approved, update user role to foodie
+      if (approved) {
+        await supabase
+          .from('profiles')
+          .update({ role: 'foodie', is_verified: true })
+          .eq('id', application.user_id)
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pending-applications'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+      queryClient.invalidateQueries({ queryKey: ['foodies'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-stats'] })
+    },
+  })
+}

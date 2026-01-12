@@ -1,11 +1,22 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { useAdminStats, usePendingApplications, useApproveApplication } from '~/lib/hooks'
 
 export const Route = createFileRoute('/admin/')({
   component: AdminDashboard,
 })
 
 function AdminDashboard() {
-  // TODO: Add auth check - redirect if not admin
+  const { data: stats, isLoading } = useAdminStats()
+  const { data: pendingApps } = usePendingApplications()
+  const approveApplication = useApproveApplication()
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -15,23 +26,68 @@ function AdminDashboard() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="stat bg-base-200 rounded-lg">
           <div className="stat-title">Restaurants</div>
-          <div className="stat-value text-primary">0</div>
+          <div className="stat-value text-primary">{stats?.restaurantCount || 0}</div>
         </div>
         <div className="stat bg-base-200 rounded-lg">
           <div className="stat-title">Reviews</div>
-          <div className="stat-value text-secondary">0</div>
+          <div className="stat-value text-secondary">{stats?.reviewCount || 0}</div>
         </div>
         <div className="stat bg-base-200 rounded-lg">
           <div className="stat-title">Foodies</div>
-          <div className="stat-value text-accent">0</div>
+          <div className="stat-value text-accent">{stats?.foodieCount || 0}</div>
         </div>
         <div className="stat bg-base-200 rounded-lg">
           <div className="stat-title">Users</div>
-          <div className="stat-value">0</div>
+          <div className="stat-value">{stats?.userCount || 0}</div>
         </div>
       </div>
 
+      {/* Pending Applications */}
+      {pendingApps && pendingApps.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            Pending Foodie Applications
+            <span className="badge badge-warning">{pendingApps.length}</span>
+          </h2>
+          <div className="space-y-4">
+            {pendingApps.map((app: any) => (
+              <div key={app.id} className="card bg-base-200">
+                <div className="card-body">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-bold">{app.user?.display_name || 'Unknown'}</h3>
+                      <p className="text-sm text-base-content/70">{app.user?.email}</p>
+                      <p className="mt-2">{app.application_text}</p>
+                      <p className="text-xs text-base-content/50 mt-2">
+                        Applied: {new Date(app.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        className="btn btn-success btn-sm"
+                        onClick={() => approveApplication.mutate({ applicationId: app.id, approved: true })}
+                        disabled={approveApplication.isPending}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="btn btn-error btn-sm"
+                        onClick={() => approveApplication.mutate({ applicationId: app.id, approved: false })}
+                        disabled={approveApplication.isPending}
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Quick Actions */}
+      <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Manage Restaurants */}
         <div className="card bg-base-200">
@@ -39,32 +95,8 @@ function AdminDashboard() {
             <h2 className="card-title">Restaurants</h2>
             <p className="text-base-content/70">Add, edit, or remove restaurants</p>
             <div className="card-actions mt-4">
-              <a href="/admin/restaurants" className="btn btn-primary btn-sm">Manage</a>
-              <a href="/admin/restaurants/new" className="btn btn-outline btn-sm">Add New</a>
-            </div>
-          </div>
-        </div>
-
-        {/* Manage Foodies */}
-        <div className="card bg-base-200">
-          <div className="card-body">
-            <h2 className="card-title">Food Reviewers</h2>
-            <p className="text-base-content/70">Approve or manage foodie accounts</p>
-            <div className="card-actions mt-4">
-              <a href="/admin/foodies" className="btn btn-primary btn-sm">Manage</a>
-              <span className="badge badge-warning">0 pending</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Manage Reviews */}
-        <div className="card bg-base-200">
-          <div className="card-body">
-            <h2 className="card-title">Reviews</h2>
-            <p className="text-base-content/70">Moderate reviews and comments</p>
-            <div className="card-actions mt-4">
-              <a href="/admin/reviews" className="btn btn-primary btn-sm">View All</a>
-              <span className="badge badge-info">0 flagged</span>
+              <Link to="/admin/restaurants" className="btn btn-primary btn-sm">Manage</Link>
+              <Link to="/admin/restaurants/new" className="btn btn-outline btn-sm">Add New</Link>
             </div>
           </div>
         </div>
@@ -73,31 +105,20 @@ function AdminDashboard() {
         <div className="card bg-base-200">
           <div className="card-body">
             <h2 className="card-title">Users</h2>
-            <p className="text-base-content/70">Manage user accounts</p>
+            <p className="text-base-content/70">Manage user accounts and roles</p>
             <div className="card-actions mt-4">
-              <a href="/admin/users" className="btn btn-primary btn-sm">Manage</a>
+              <Link to="/admin/users" className="btn btn-primary btn-sm">Manage</Link>
             </div>
           </div>
         </div>
 
-        {/* Menu Items */}
+        {/* View Reviews */}
         <div className="card bg-base-200">
           <div className="card-body">
-            <h2 className="card-title">Menu Items</h2>
-            <p className="text-base-content/70">Manage menu recommendations</p>
+            <h2 className="card-title">Reviews</h2>
+            <p className="text-base-content/70">View all reviews</p>
             <div className="card-actions mt-4">
-              <a href="/admin/menu-items" className="btn btn-primary btn-sm">Manage</a>
-            </div>
-          </div>
-        </div>
-
-        {/* Site Settings */}
-        <div className="card bg-base-200">
-          <div className="card-body">
-            <h2 className="card-title">Settings</h2>
-            <p className="text-base-content/70">Site configuration</p>
-            <div className="card-actions mt-4">
-              <a href="/admin/settings" className="btn btn-primary btn-sm">Configure</a>
+              <Link to="/restaurants" className="btn btn-primary btn-sm">View</Link>
             </div>
           </div>
         </div>

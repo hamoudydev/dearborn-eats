@@ -17,6 +17,10 @@ import { Route as RestaurantsIdRouteImport } from './routes/restaurants.$id'
 import { Route as FoodiesIdRouteImport } from './routes/foodies.$id'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminRestaurantsRouteImport } from './routes/admin/restaurants'
+import { Route as AdminRestaurantsNewRouteImport } from './routes/admin/restaurants.new'
+import { Route as AdminRestaurantsIdRouteImport } from './routes/admin/restaurants.$id'
 
 const RestaurantsRoute = RestaurantsRouteImport.update({
   id: '/restaurants',
@@ -58,37 +62,69 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRestaurantsRoute = AdminRestaurantsRouteImport.update({
+  id: '/admin/restaurants',
+  path: '/admin/restaurants',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRestaurantsNewRoute = AdminRestaurantsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AdminRestaurantsRoute,
+} as any)
+const AdminRestaurantsIdRoute = AdminRestaurantsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminRestaurantsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/foodies': typeof FoodiesRouteWithChildren
   '/restaurants': typeof RestaurantsRouteWithChildren
+  '/admin/restaurants': typeof AdminRestaurantsRouteWithChildren
+  '/admin/users': typeof AdminUsersRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/foodies/$id': typeof FoodiesIdRoute
   '/restaurants/$id': typeof RestaurantsIdRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/restaurants/$id': typeof AdminRestaurantsIdRoute
+  '/admin/restaurants/new': typeof AdminRestaurantsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/foodies': typeof FoodiesRouteWithChildren
   '/restaurants': typeof RestaurantsRouteWithChildren
+  '/admin/restaurants': typeof AdminRestaurantsRouteWithChildren
+  '/admin/users': typeof AdminUsersRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/foodies/$id': typeof FoodiesIdRoute
   '/restaurants/$id': typeof RestaurantsIdRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/restaurants/$id': typeof AdminRestaurantsIdRoute
+  '/admin/restaurants/new': typeof AdminRestaurantsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/foodies': typeof FoodiesRouteWithChildren
   '/restaurants': typeof RestaurantsRouteWithChildren
+  '/admin/restaurants': typeof AdminRestaurantsRouteWithChildren
+  '/admin/users': typeof AdminUsersRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/foodies/$id': typeof FoodiesIdRoute
   '/restaurants/$id': typeof RestaurantsIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/restaurants/$id': typeof AdminRestaurantsIdRoute
+  '/admin/restaurants/new': typeof AdminRestaurantsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,37 +132,51 @@ export interface FileRouteTypes {
     | '/'
     | '/foodies'
     | '/restaurants'
+    | '/admin/restaurants'
+    | '/admin/users'
     | '/auth/login'
     | '/auth/register'
     | '/foodies/$id'
     | '/restaurants/$id'
     | '/admin'
+    | '/admin/restaurants/$id'
+    | '/admin/restaurants/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/foodies'
     | '/restaurants'
+    | '/admin/restaurants'
+    | '/admin/users'
     | '/auth/login'
     | '/auth/register'
     | '/foodies/$id'
     | '/restaurants/$id'
     | '/admin'
+    | '/admin/restaurants/$id'
+    | '/admin/restaurants/new'
   id:
     | '__root__'
     | '/'
     | '/foodies'
     | '/restaurants'
+    | '/admin/restaurants'
+    | '/admin/users'
     | '/auth/login'
     | '/auth/register'
     | '/foodies/$id'
     | '/restaurants/$id'
     | '/admin/'
+    | '/admin/restaurants/$id'
+    | '/admin/restaurants/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FoodiesRoute: typeof FoodiesRouteWithChildren
   RestaurantsRoute: typeof RestaurantsRouteWithChildren
+  AdminRestaurantsRoute: typeof AdminRestaurantsRouteWithChildren
+  AdminUsersRoute: typeof AdminUsersRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -190,6 +240,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/restaurants': {
+      id: '/admin/restaurants'
+      path: '/admin/restaurants'
+      fullPath: '/admin/restaurants'
+      preLoaderRoute: typeof AdminRestaurantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/restaurants/new': {
+      id: '/admin/restaurants/new'
+      path: '/new'
+      fullPath: '/admin/restaurants/new'
+      preLoaderRoute: typeof AdminRestaurantsNewRouteImport
+      parentRoute: typeof AdminRestaurantsRoute
+    }
+    '/admin/restaurants/$id': {
+      id: '/admin/restaurants/$id'
+      path: '/$id'
+      fullPath: '/admin/restaurants/$id'
+      preLoaderRoute: typeof AdminRestaurantsIdRouteImport
+      parentRoute: typeof AdminRestaurantsRoute
+    }
   }
 }
 
@@ -216,10 +294,25 @@ const RestaurantsRouteWithChildren = RestaurantsRoute._addFileChildren(
   RestaurantsRouteChildren,
 )
 
+interface AdminRestaurantsRouteChildren {
+  AdminRestaurantsIdRoute: typeof AdminRestaurantsIdRoute
+  AdminRestaurantsNewRoute: typeof AdminRestaurantsNewRoute
+}
+
+const AdminRestaurantsRouteChildren: AdminRestaurantsRouteChildren = {
+  AdminRestaurantsIdRoute: AdminRestaurantsIdRoute,
+  AdminRestaurantsNewRoute: AdminRestaurantsNewRoute,
+}
+
+const AdminRestaurantsRouteWithChildren =
+  AdminRestaurantsRoute._addFileChildren(AdminRestaurantsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FoodiesRoute: FoodiesRouteWithChildren,
   RestaurantsRoute: RestaurantsRouteWithChildren,
+  AdminRestaurantsRoute: AdminRestaurantsRouteWithChildren,
+  AdminUsersRoute: AdminUsersRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AdminIndexRoute: AdminIndexRoute,
