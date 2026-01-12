@@ -16,6 +16,7 @@ const cuisineCategories = [
   { name: 'American', emoji: '🇺🇸' },
   { name: 'Mexican', emoji: '🇲🇽' },
   { name: 'Asian', emoji: '🍜' },
+  { name: 'Italian', emoji: '🇮🇹' },
   { name: 'Bakery', emoji: '🥯' },
 ]
 
@@ -45,7 +46,7 @@ function HomePage() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
-              Dearborn's Best Eats
+              Dearborn's Best Places to Eat
             </h1>
             <p className="text-lg text-base-content/70 mb-8">
               Discover restaurants and food trucks, reviewed by local foodies

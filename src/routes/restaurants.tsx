@@ -36,7 +36,7 @@ function RestaurantsPage() {
     setCuisineFilter(search.cuisine || '')
   }, [search.q, search.cuisine])
 
-  const cuisines = ['Middle Eastern', 'Lebanese', 'Iraqi', 'Yemeni', 'Mediterranean', 'American', 'Mexican', 'Asian', 'Bakery']
+  const cuisines = ['Middle Eastern', 'Lebanese', 'Iraqi', 'Yemeni', 'Mediterranean', 'American', 'Mexican', 'Asian', 'Italian', 'Bakery']
 
   // Filter restaurants by search query and cuisine
   const filteredRestaurants = restaurants?.filter((restaurant) => {
