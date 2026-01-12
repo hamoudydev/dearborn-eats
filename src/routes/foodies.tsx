@@ -1,13 +1,21 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { FoodieCard } from '~/components/FoodieCard'
+import { useFoodies } from '~/lib/hooks'
 
 export const Route = createFileRoute('/foodies')({
   component: FoodiesPage,
 })
 
 function FoodiesPage() {
-  // TODO: Fetch foodies from Supabase
-  const foodies: never[] = []
+  const { data: foodies, isLoading } = useFoodies()
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -19,7 +27,7 @@ function FoodiesPage() {
         </p>
       </div>
 
-      {foodies.length === 0 ? (
+      {!foodies || foodies.length === 0 ? (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">👨‍🍳</div>
           <h2 className="text-2xl font-bold mb-2">Foodies coming soon</h2>
@@ -28,7 +36,7 @@ function FoodiesPage() {
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {foodies.map((foodie) => (
-            <FoodieCard key={foodie} foodie={foodie} />
+            <FoodieCard key={foodie.id} foodie={foodie} />
           ))}
         </div>
       )}
@@ -40,7 +48,7 @@ function FoodiesPage() {
           Are you passionate about Dearborn's food scene? Apply to become a verified foodie
           and share your reviews with the community.
         </p>
-        <a href="/auth/register" className="btn btn-primary">Apply Now</a>
+        <Link to="/auth/register" className="btn btn-primary">Apply Now</Link>
       </section>
     </div>
   )
