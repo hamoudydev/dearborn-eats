@@ -17,7 +17,12 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         )}
       </figure>
       <div className="card-body">
-        <h3 className="card-title">{restaurant.name}</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="card-title">{restaurant.name}</h3>
+          {restaurant.is_food_truck && (
+            <span className="badge badge-secondary badge-sm">Food Truck</span>
+          )}
+        </div>
         <p className="text-base-content/70 text-sm">{restaurant.cuisine} • {restaurant.price_range}</p>
         <div className="flex items-center gap-2 mt-2">
           <StarRating rating={restaurant.foodie_rating || 0} size="sm" />

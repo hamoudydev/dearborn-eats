@@ -9,7 +9,6 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   const { data: restaurants } = useRestaurants()
   const restaurantCount = restaurants?.length || 0
-  const foodTruckCount = restaurants?.filter(r => r.is_food_truck).length || 0
 
   return (
     <div>
@@ -22,15 +21,12 @@ function HomePage() {
               Discover the best restaurants and food trucks in Dearborn, MI — curated by local foodies.
             </p>
             {restaurantCount > 0 && (
-              <div className="flex gap-4 justify-center mb-6">
-                <div className="badge badge-primary badge-lg">{restaurantCount} Restaurants</div>
-                {foodTruckCount > 0 && (
-                  <div className="badge badge-secondary badge-lg">{foodTruckCount} Food Trucks</div>
-                )}
+              <div className="mb-6">
+                <div className="badge badge-primary badge-lg">{restaurantCount} Places to Eat</div>
               </div>
             )}
             <div className="flex gap-4 justify-center">
-              <Link to="/restaurants" className="btn btn-primary btn-lg">Browse Restaurants</Link>
+              <Link to="/restaurants" className="btn btn-primary btn-lg">Browse All</Link>
               <Link to="/foodies" className="btn btn-outline btn-lg">Meet the Foodies</Link>
             </div>
           </div>
