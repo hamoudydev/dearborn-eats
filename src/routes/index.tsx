@@ -1,12 +1,17 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { MapView } from '~/components/MapView'
 import { FeaturedReviews } from '~/components/FeaturedReviews'
+import { useRestaurants } from '~/lib/hooks'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
 
 function HomePage() {
+  const { data: restaurants } = useRestaurants()
+  const restaurantCount = restaurants?.length || 0
+  const foodTruckCount = restaurants?.filter(r => r.is_food_truck).length || 0
+
   return (
     <div>
       {/* Hero with Map */}
@@ -18,9 +23,17 @@ function HomePage() {
             <p className="text-base-content/70">
               Discover the best restaurants and food trucks in Dearborn, MI — curated by local foodies.
             </p>
+            {restaurantCount > 0 && (
+              <div className="flex gap-4 mt-3 text-sm">
+                <div className="badge badge-primary badge-lg">{restaurantCount} Restaurants</div>
+                {foodTruckCount > 0 && (
+                  <div className="badge badge-secondary badge-lg">{foodTruckCount} Food Trucks</div>
+                )}
+              </div>
+            )}
             <div className="mt-4 flex gap-2">
-              <a href="/restaurants" className="btn btn-primary">Browse Restaurants</a>
-              <a href="/foodies" className="btn btn-outline">Meet the Foodies</a>
+              <Link to="/restaurants" className="btn btn-primary">Browse Restaurants</Link>
+              <Link to="/foodies" className="btn btn-outline">Meet the Foodies</Link>
             </div>
           </div>
         </div>
