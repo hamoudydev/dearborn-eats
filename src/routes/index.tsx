@@ -10,11 +10,11 @@ export const Route = createFileRoute('/')({
 const cuisineCategories = [
   { name: 'Middle Eastern', emoji: '🧆' },
   { name: 'Lebanese', emoji: '🇱🇧' },
-  { name: 'Iraqi', emoji: '🍖' },
-  { name: 'Yemeni', emoji: '🍲' },
+  { name: 'Iraqi', emoji: '🇮🇶' },
+  { name: 'Yemeni', emoji: '🇾🇪' },
   { name: 'Mediterranean', emoji: '🫒' },
-  { name: 'American', emoji: '🍔' },
-  { name: 'Mexican', emoji: '🌮' },
+  { name: 'American', emoji: '🇺🇸' },
+  { name: 'Mexican', emoji: '🇲🇽' },
   { name: 'Asian', emoji: '🍜' },
   { name: 'Bakery', emoji: '🥯' },
 ]
