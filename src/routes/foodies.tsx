@@ -1,10 +1,20 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, useMatch } from '@tanstack/react-router'
 import { FoodieCard } from '~/components/FoodieCard'
 import { useFoodies } from '~/lib/hooks'
 
 export const Route = createFileRoute('/foodies')({
-  component: FoodiesPage,
+  component: FoodiesLayout,
 })
+
+function FoodiesLayout() {
+  const match = useMatch({ from: '/foodies/$id', shouldThrow: false })
+
+  if (match) {
+    return <Outlet />
+  }
+
+  return <FoodiesPage />
+}
 
 function FoodiesPage() {
   const { data: foodies, isLoading } = useFoodies()

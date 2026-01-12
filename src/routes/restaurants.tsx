@@ -1,11 +1,22 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Outlet, useMatch } from '@tanstack/react-router'
 import { useState } from 'react'
 import { RestaurantCard } from '~/components/RestaurantCard'
 import { useRestaurants } from '~/lib/hooks'
 
 export const Route = createFileRoute('/restaurants')({
-  component: RestaurantsPage,
+  component: RestaurantsLayout,
 })
+
+function RestaurantsLayout() {
+  // Check if we're on a child route (restaurant detail page)
+  const match = useMatch({ from: '/restaurants/$slug', shouldThrow: false })
+
+  if (match) {
+    return <Outlet />
+  }
+
+  return <RestaurantsPage />
+}
 
 function RestaurantsPage() {
   const [cuisineFilter, setCuisineFilter] = useState<string>('')
