@@ -47,6 +47,23 @@ export function useRestaurant(id: string) {
   })
 }
 
+export function useRestaurantBySlug(slug: string) {
+  return useQuery({
+    queryKey: ['restaurants', 'slug', slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*')
+        .eq('slug', slug)
+        .single()
+
+      if (error) throw error
+      return data as Restaurant
+    },
+    enabled: !!slug,
+  })
+}
+
 export function useRestaurantRatings(restaurantId: string) {
   return useQuery({
     queryKey: ['restaurant-ratings', restaurantId],

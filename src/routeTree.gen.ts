@@ -13,7 +13,7 @@ import { Route as RestaurantsRouteImport } from './routes/restaurants'
 import { Route as FoodiesRouteImport } from './routes/foodies'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as RestaurantsIdRouteImport } from './routes/restaurants.$id'
+import { Route as RestaurantsSlugRouteImport } from './routes/restaurants.$slug'
 import { Route as FoodiesIdRouteImport } from './routes/foodies.$id'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -42,9 +42,9 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RestaurantsIdRoute = RestaurantsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
+const RestaurantsSlugRoute = RestaurantsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
   getParentRoute: () => RestaurantsRoute,
 } as any)
 const FoodiesIdRoute = FoodiesIdRouteImport.update({
@@ -92,7 +92,7 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/foodies/$id': typeof FoodiesIdRoute
-  '/restaurants/$id': typeof RestaurantsIdRoute
+  '/restaurants/$slug': typeof RestaurantsSlugRoute
   '/admin': typeof AdminIndexRoute
   '/admin/restaurants/$id': typeof AdminRestaurantsIdRoute
   '/admin/restaurants/new': typeof AdminRestaurantsNewRoute
@@ -106,7 +106,7 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/foodies/$id': typeof FoodiesIdRoute
-  '/restaurants/$id': typeof RestaurantsIdRoute
+  '/restaurants/$slug': typeof RestaurantsSlugRoute
   '/admin': typeof AdminIndexRoute
   '/admin/restaurants/$id': typeof AdminRestaurantsIdRoute
   '/admin/restaurants/new': typeof AdminRestaurantsNewRoute
@@ -121,7 +121,7 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/foodies/$id': typeof FoodiesIdRoute
-  '/restaurants/$id': typeof RestaurantsIdRoute
+  '/restaurants/$slug': typeof RestaurantsSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/restaurants/$id': typeof AdminRestaurantsIdRoute
   '/admin/restaurants/new': typeof AdminRestaurantsNewRoute
@@ -137,7 +137,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/foodies/$id'
-    | '/restaurants/$id'
+    | '/restaurants/$slug'
     | '/admin'
     | '/admin/restaurants/$id'
     | '/admin/restaurants/new'
@@ -151,7 +151,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/foodies/$id'
-    | '/restaurants/$id'
+    | '/restaurants/$slug'
     | '/admin'
     | '/admin/restaurants/$id'
     | '/admin/restaurants/new'
@@ -165,7 +165,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/foodies/$id'
-    | '/restaurants/$id'
+    | '/restaurants/$slug'
     | '/admin/'
     | '/admin/restaurants/$id'
     | '/admin/restaurants/new'
@@ -212,11 +212,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/restaurants/$id': {
-      id: '/restaurants/$id'
-      path: '/$id'
-      fullPath: '/restaurants/$id'
-      preLoaderRoute: typeof RestaurantsIdRouteImport
+    '/restaurants/$slug': {
+      id: '/restaurants/$slug'
+      path: '/$slug'
+      fullPath: '/restaurants/$slug'
+      preLoaderRoute: typeof RestaurantsSlugRouteImport
       parentRoute: typeof RestaurantsRoute
     }
     '/foodies/$id': {
@@ -283,11 +283,11 @@ const FoodiesRouteWithChildren =
   FoodiesRoute._addFileChildren(FoodiesRouteChildren)
 
 interface RestaurantsRouteChildren {
-  RestaurantsIdRoute: typeof RestaurantsIdRoute
+  RestaurantsSlugRoute: typeof RestaurantsSlugRoute
 }
 
 const RestaurantsRouteChildren: RestaurantsRouteChildren = {
-  RestaurantsIdRoute: RestaurantsIdRoute,
+  RestaurantsSlugRoute: RestaurantsSlugRoute,
 }
 
 const RestaurantsRouteWithChildren = RestaurantsRoute._addFileChildren(

@@ -77,7 +77,7 @@ export function MapView() {
           <h3 style="font-weight: bold; font-size: 16px; margin-bottom: 4px;">${restaurant.name}</h3>
           <p style="color: #666; font-size: 12px; margin-bottom: 4px;">${restaurant.cuisine} • ${restaurant.price_range}</p>
           <p style="color: #888; font-size: 11px; margin-bottom: 8px;">${restaurant.address}</p>
-          <a href="/restaurants/${restaurant.id}" style="color: #1a5f2a; font-size: 12px; text-decoration: underline;">View Details →</a>
+          <a href="/restaurants/${restaurant.slug}" style="color: #1a5f2a; font-size: 12px; text-decoration: underline;">View Details →</a>
         </div>
       `)
 

@@ -8,7 +8,7 @@ interface RestaurantCardProps {
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   return (
-    <Link to="/restaurants/$id" params={{ id: restaurant.id }} className="card bg-base-200 hover:shadow-lg transition-shadow">
+    <Link to="/restaurants/$slug" params={{ slug: restaurant.slug }} className="card bg-base-200 hover:shadow-lg transition-shadow">
       <figure className="h-48 bg-base-300 flex items-center justify-center">
         {restaurant.image_url ? (
           <img src={restaurant.image_url} alt={restaurant.name} className="w-full h-full object-cover" />

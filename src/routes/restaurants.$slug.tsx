@@ -1,16 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ReviewCard } from '~/components/ReviewCard'
 import { StarRating } from '~/components/StarRating'
-import { useRestaurant, useReviews } from '~/lib/hooks'
+import { useRestaurantBySlug, useReviews } from '~/lib/hooks'
 
-export const Route = createFileRoute('/restaurants/$id')({
+export const Route = createFileRoute('/restaurants/$slug')({
   component: RestaurantDetailPage,
 })
 
 function RestaurantDetailPage() {
-  const { id } = Route.useParams()
-  const { data: restaurant, isLoading, error } = useRestaurant(id)
-  const { data: reviews } = useReviews(id)
+  const { slug } = Route.useParams()
+  const { data: restaurant, isLoading, error } = useRestaurantBySlug(slug)
+  const { data: reviews } = useReviews(restaurant?.id || '')
 
   if (isLoading) {
     return (
