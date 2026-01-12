@@ -1,10 +1,16 @@
-import { createFileRoute, Outlet, useMatch } from '@tanstack/react-router'
-import { useState } from 'react'
+import { createFileRoute, Outlet, useMatch, useSearch } from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
 import { RestaurantCard } from '~/components/RestaurantCard'
 import { useRestaurants } from '~/lib/hooks'
 
 export const Route = createFileRoute('/restaurants')({
   component: RestaurantsLayout,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      q: (search.q as string) || '',
+      cuisine: (search.cuisine as string) || '',
+    }
+  },
 })
 
 function RestaurantsLayout() {
@@ -19,9 +25,16 @@ function RestaurantsLayout() {
 }
 
 function RestaurantsPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [cuisineFilter, setCuisineFilter] = useState<string>('')
+  const search = useSearch({ from: '/restaurants' })
+  const [searchQuery, setSearchQuery] = useState(search.q || '')
+  const [cuisineFilter, setCuisineFilter] = useState<string>(search.cuisine || '')
   const { data: restaurants, isLoading, error } = useRestaurants()
+
+  // Update filters when URL params change
+  useEffect(() => {
+    setSearchQuery(search.q || '')
+    setCuisineFilter(search.cuisine || '')
+  }, [search.q, search.cuisine])
 
   const cuisines = ['Middle Eastern', 'Lebanese', 'Iraqi', 'Yemeni', 'Mediterranean', 'American', 'Mexican', 'Asian', 'Bakery']
 
