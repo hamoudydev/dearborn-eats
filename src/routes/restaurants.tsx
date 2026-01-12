@@ -19,12 +19,20 @@ function RestaurantsLayout() {
 }
 
 function RestaurantsPage() {
+  const [searchQuery, setSearchQuery] = useState('')
   const [cuisineFilter, setCuisineFilter] = useState<string>('')
-  const { data: restaurants, isLoading, error } = useRestaurants(
-    cuisineFilter ? { cuisine: cuisineFilter } : undefined
-  )
+  const { data: restaurants, isLoading, error } = useRestaurants()
 
-  const cuisines = ['Middle Eastern', 'Lebanese', 'Iraqi', 'Yemeni', 'Mediterranean', 'American', 'Mexican', 'Bakery']
+  const cuisines = ['Middle Eastern', 'Lebanese', 'Iraqi', 'Yemeni', 'Mediterranean', 'American', 'Mexican', 'Asian', 'Bakery']
+
+  // Filter restaurants by search query and cuisine
+  const filteredRestaurants = restaurants?.filter((restaurant) => {
+    const matchesSearch = searchQuery === '' ||
+      restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCuisine = cuisineFilter === '' || restaurant.cuisine === cuisineFilter
+    return matchesSearch && matchesCuisine
+  })
 
   if (error) {
     return (
@@ -38,40 +46,74 @@ function RestaurantsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Restaurants</h1>
-          <p className="text-base-content/70">Explore Dearborn's best food spots</p>
-        </div>
-        <div className="mt-4 md:mt-0 flex gap-2">
-          <select
-            className="select select-bordered"
-            value={cuisineFilter}
-            onChange={(e) => setCuisineFilter(e.target.value)}
-          >
-            <option value="">All Cuisines</option>
-            {cuisines.map((cuisine) => (
-              <option key={cuisine} value={cuisine}>{cuisine}</option>
-            ))}
-          </select>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Restaurants</h1>
+        <p className="text-base-content/70">Explore Dearborn's best food spots</p>
       </div>
+
+      {/* Search and Filter */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-8">
+        <div className="relative flex-1">
+          <input
+            type="text"
+            placeholder="Search by name or cuisine..."
+            className="input input-bordered w-full pl-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <select
+          className="select select-bordered"
+          value={cuisineFilter}
+          onChange={(e) => setCuisineFilter(e.target.value)}
+        >
+          <option value="">All Cuisines</option>
+          {cuisines.map((cuisine) => (
+            <option key={cuisine} value={cuisine}>{cuisine}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Results count */}
+      {!isLoading && filteredRestaurants && (
+        <p className="text-sm text-base-content/70 mb-4">
+          {filteredRestaurants.length} {filteredRestaurants.length === 1 ? 'result' : 'results'}
+          {(searchQuery || cuisineFilter) && ' found'}
+        </p>
+      )}
 
       {isLoading ? (
         <div className="flex justify-center py-16">
           <span className="loading loading-spinner loading-lg"></span>
         </div>
-      ) : !restaurants || restaurants.length === 0 ? (
+      ) : !filteredRestaurants || filteredRestaurants.length === 0 ? (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">🍽️</div>
           <h2 className="text-2xl font-bold mb-2">No restaurants found</h2>
           <p className="text-base-content/70">
-            {cuisineFilter ? `No ${cuisineFilter} restaurants yet.` : "Check back soon for Dearborn's best food spots!"}
+            {searchQuery || cuisineFilter ? 'Try a different search or filter.' : "Check back soon for Dearborn's best food spots!"}
           </p>
+          {(searchQuery || cuisineFilter) && (
+            <button
+              className="btn btn-outline btn-sm mt-4"
+              onClick={() => { setSearchQuery(''); setCuisineFilter(''); }}
+            >
+              Clear filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {restaurants.map((restaurant) => (
+          {filteredRestaurants.map((restaurant) => (
             <RestaurantCard key={restaurant.id} restaurant={restaurant} />
           ))}
         </div>
