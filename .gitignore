@@ -27,3 +27,7 @@ npm-debug.log*
 
 # Supabase
 supabase/.temp/
+
+# Temp files
+*.timestamp*.js
+app.config.timestamp*

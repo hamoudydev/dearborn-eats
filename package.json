@@ -3,25 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "sideEffects": false,
   "scripts": {
-    "dev": "vinxi dev",
-    "build": "vinxi build",
-    "start": "vinxi start",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "db:generate": "supabase gen types typescript --local > src/lib/database.types.ts",
-    "db:push": "supabase db push",
-    "db:studio": "supabase studio"
+    "db:push": "supabase db push"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.47.0",
     "@tanstack/react-query": "^5.62.0",
-    "@tanstack/react-router": "^1.92.0",
-    "@tanstack/start": "^1.92.0",
+    "@tanstack/react-router": "^1.147.0",
     "mapbox-gl": "^3.8.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "vinxi": "^0.5.1"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@tanstack/router-devtools": "^1.147.0",
+    "@tanstack/router-plugin": "^1.147.0",
     "@types/mapbox-gl": "^3.4.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
