@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { MapView } from '~/components/MapView'
 import { FeaturedReviews } from '~/components/FeaturedReviews'
 import { useRestaurants } from '~/lib/hooks'
 
@@ -14,26 +13,25 @@ function HomePage() {
 
   return (
     <div>
-      {/* Hero with Map */}
-      <section className="h-[70vh] relative">
-        <MapView />
-        <div className="absolute top-8 left-8 z-10">
-          <div className="bg-base-100/90 backdrop-blur-sm rounded-lg p-6 shadow-xl max-w-md">
-            <h1 className="text-4xl font-bold text-primary mb-2">Dearborn Eats</h1>
-            <p className="text-base-content/70">
+      {/* Hero */}
+      <section className="hero min-h-[60vh] bg-base-200">
+        <div className="hero-content text-center">
+          <div className="max-w-2xl">
+            <h1 className="text-5xl font-bold text-primary mb-4">Dearborn Eats</h1>
+            <p className="text-xl text-base-content/70 mb-6">
               Discover the best restaurants and food trucks in Dearborn, MI — curated by local foodies.
             </p>
             {restaurantCount > 0 && (
-              <div className="flex gap-4 mt-3 text-sm">
+              <div className="flex gap-4 justify-center mb-6">
                 <div className="badge badge-primary badge-lg">{restaurantCount} Restaurants</div>
                 {foodTruckCount > 0 && (
                   <div className="badge badge-secondary badge-lg">{foodTruckCount} Food Trucks</div>
                 )}
               </div>
             )}
-            <div className="mt-4 flex gap-2">
-              <Link to="/restaurants" className="btn btn-primary">Browse Restaurants</Link>
-              <Link to="/foodies" className="btn btn-outline">Meet the Foodies</Link>
+            <div className="flex gap-4 justify-center">
+              <Link to="/restaurants" className="btn btn-primary btn-lg">Browse Restaurants</Link>
+              <Link to="/foodies" className="btn btn-outline btn-lg">Meet the Foodies</Link>
             </div>
           </div>
         </div>
@@ -54,7 +52,7 @@ function HomePage() {
               <div className="card-body items-center text-center">
                 <div className="text-4xl mb-4">🍽️</div>
                 <h3 className="card-title">Discover</h3>
-                <p>Explore restaurants and food trucks across Dearborn on our interactive map.</p>
+                <p>Explore restaurants and food trucks across Dearborn, curated by locals.</p>
               </div>
             </div>
             <div className="card bg-base-100 shadow-lg">
