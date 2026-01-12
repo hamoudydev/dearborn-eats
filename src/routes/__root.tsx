@@ -9,7 +9,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <div className="min-h-screen bg-base-100" data-theme="dearborneats">
+    <div className="min-h-screen bg-base-100">
       <Navbar />
       <main>
         <Suspense fallback={
